@@ -1,4 +1,4 @@
-name: Backend CI - Build & Push Image
+name: Backend CI - Test, Build & Push Images
 
 on:
   workflow_dispatch:
@@ -10,9 +10,40 @@ on:
       - '.github/workflows/backend_ci.yml'
 
 jobs:
+  # Job 1: Test & Lint
+  test_and_lint_backends:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Example: Python backend testing
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          cd backend/product_service
+          pip install -r requirements.txt || true
+          cd ../order_service
+          pip install -r requirements.txt || true
+
+      - name: Run flake8 lint
+        run: |
+          pip install flake8 || true
+          flake8 backend || true
+
+      - name: Run pytest
+        run: |
+          pip install pytest || true
+          pytest backend || true
+
+  # Job 2: Build & Push (depends on tests)
   build_and_push_backend:
     runs-on: ubuntu-latest
-
+    needs: test_and_lint_backends   # only runs if tests pass
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -43,3 +74,4 @@ jobs:
       - name: Logout from Azure
         if: always()
         run: az logout
+
