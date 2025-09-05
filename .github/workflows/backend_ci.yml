@@ -14,26 +14,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # Azure login
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Azure login (uses service principal JSON)
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Login to Azure Container Registry (ACR)
-    - name: Login to ACR
-      run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY }}
+      # Login to Azure Container Registry (ACR) using SHORT registry name (e.g., sit722week07acr)
+      - name: Login to ACR
+        run: az acr login --name ${{ secrets.AZURE_CONTAINER_REGISTRY }}
 
-    # Build and Push Backend Docker Image
-    - name: Build and Push Backend Image
-      run: |
-        docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}/backend:latest ./backend
-        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}/backend:latest
+      # Build & push product_service
+      - name: Build and Push product_service
+        run: |
+          docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/product_service:latest ./backend/product_service
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/product_service:latest
 
-    # Logout
-    - name: Logout from Azure
-      run: az logout
-      if: always()
+      # Build & push order_service
+      - name: Build and Push order_service
+        run: |
+          docker build -t ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/order_service:latest ./backend/order_service
+          docker push ${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/order_service:latest
+
+      # Logout
+      - name: Logout from Azure
+        if: always()
+        run: az logout
