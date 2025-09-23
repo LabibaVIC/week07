@@ -3,11 +3,7 @@ name: CD Pipeline
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - ".github/workflows/cd.yml"
-      - "deploy/**"
-      - "frontend/**"
-      - "backend/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,4 +15,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: Deploy (demo)
         run: echo "Deploying to Azure... (demo)"
-      # Replace with real az/kubectl commands if you choose to do a live deploy
+
