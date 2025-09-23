@@ -76,3 +76,13 @@ After triggering the pipeline, you can monitor its progress and results:
 5. Successful completion: A green checkmark next to the workflow run indicates all jobs passed successfully, meaning your code is tested, linted, and images are pushed to ACR.
 6. # Test change to trigger CI
 
+# Trigger CI proof
+# Trigger CI proof
+# Trigger CI proof
+# Trigger CI proof
+# Trigger CI proof
+# Trigger CI proof
+# Trigger CI proof
+# retrigger
+# trigger-ci Tue 23 Sep 2025 20:42:11 AEST
+# retrigger Tue 23 Sep 2025 22:05:04 AEST
