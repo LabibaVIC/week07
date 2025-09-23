@@ -77,3 +77,4 @@ After triggering the pipeline, you can monitor its progress and results:
 6. # Test change to trigger CI
 
 # Trigger CI proof
+# Trigger CI proof
