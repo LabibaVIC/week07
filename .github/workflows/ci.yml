@@ -3,12 +3,7 @@ name: CI Pipeline
 on:
   pull_request:
     branches: [ "main", "develop" ]
-    paths:
-      - "**/*.js"
-      - "**/*.ts"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/ci.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,15 +15,30 @@ concurrency:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - name: Cache npm
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      - run: npm install --silent || true
-      - run: npm test || echo "no tests"
+          cache: npm
+
+      - name: Install deps (if package.json present)
+        run: |
+          if [ -f package.json ]; then
+            npm ci || npm install
+          else
+            echo "No package.json found, skipping install."
+          fi
+
+      - name: Run tests (if defined)
+        run: |
+          if [ -f package.json ] && npm run | grep -q " test"; then
+            npm test
+          else
+            echo "No tests defined, passing."
+          fi
+
