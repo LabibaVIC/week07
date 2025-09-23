@@ -14,5 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy (demo)
-        run: echo "Deploying to Azure... (demo)"
-
+        run: |
+          echo "============================="
+          echo "🚀 Deploying to Azure... (demo)"
+          echo "============================="
+          sleep 5
+          echo "✅ Deployment simulation complete"
